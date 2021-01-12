@@ -4,8 +4,9 @@ https://github.com/SevenW/Plugwise-2-py
 # docker readme push
 https://github.com/christian-korneck/docker-pushrm#installation
 
-# create image
-sudo docker build -t plugwise-2-py .
+# create image and upload to dockerhub
+sudo docker build -t gruijter/plugwise-2-py .
+sudo docker push gruijter/plugwise-2-py
 
 # start container in background
 
