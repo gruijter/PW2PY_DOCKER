@@ -1,0 +1,15 @@
+# plugwise-2-py
+https://github.com/SevenW/Plugwise-2-py
+
+# docker readme push
+https://github.com/christian-korneck/docker-pushrm#installation
+
+# create image
+sudo docker build -t plugwise-2-py .
+
+# start container in background
+
+sudo docker run --restart=always --name pw2py -d \
+  -p 1883:1883 -p 8000:8000 \
+  -v pw2py:/home/pi/pw2py_host/ \
+  gruijter/plugwise-2-py

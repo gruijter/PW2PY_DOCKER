@@ -1,0 +1,11 @@
+{
+  "mqtt_ip":"127.0.0.1",
+  "mqtt_port":"1883",
+  "mqtt_user": "",
+  "mqtt_password": "",
+  "serial": "/dev/ttyUSB0",
+  "permanent_path": "/home/pi/pw2py_host/datalog",
+  "tmp_path": "/home/pi/pw2py_host/tmp",
+  "log_path": "/home/pi/pw2py_host/pwlog",
+  "log_format": "epoch"
+}
