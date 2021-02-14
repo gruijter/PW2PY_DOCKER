@@ -24,6 +24,7 @@ This will create a folder on your raspberry pi where data is stored and kept eve
 ## Step 2. Start the container with console output
 ```
 sudo docker run --name pw2py --restart=always -it \
+  --device=/dev/ttyUSB0 \
   -p 1883:1883 -p 8000:8000 \
   -v pw2py:/home/pi/pw2py_host/ \
   gruijter/plugwise-2-py
