@@ -17,6 +17,7 @@ RUN pip3 install .
 
 # Prepare volume for config files and logs
 RUN mkdir -p /home/pi/pw2py_host/config && mkdir /home/pi/pw2py_host/datalog && mkdir /home/pi/pw2py_host/pwlog
+# RUN chmod 777 -R /home/pi/pw2py_host
 # VOLUME /home/pi/pw2py_host
 
 # copy default config and startup script

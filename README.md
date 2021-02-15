@@ -15,12 +15,14 @@ Plugwise-2-py is a tool to monitor and control Plugwise circles via a webinterfa
 
 ## Step 1. Install Docker and create a persistent volume
 ```sudo apt update && sudo apt install docker```
+
 ```sudo docker volume create pw2py```
 
 This will create a folder on your raspberry pi where data is stored and kept even when the docker container is stopped. After creation this folder can be found at `/var/lib/docker/volumes/pw2py`. If you ever want to redo an installation from scratch, you can clear all your data by using `sudo docker volume rm pw2py`.
 
 
 ## Step 2. Start the container with console output
+Make sure you have the Plugwise stick in one of the USB ports, and no other USB devices plugged in.
 ```
 sudo docker run --name pw2py --restart=always -it \
   --device=/dev/ttyUSB0 \
