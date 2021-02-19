@@ -10,16 +10,15 @@ Plugwise-2-py is a tool to monitor and control Plugwise circles via a webinterfa
 * Port 8000 (PW2Py webserver) and port 1883 (MQTT server) are free to use on the Rpi
 * Able to start the console (terminal) and copy-paste the instructions below
 
-
 ## Installation steps:
 
-## Step 1. Install Docker and create a persistent volume
-```sudo apt update && sudo apt install docker```
+## Step 0. Install Docker
+For Raspbian OS see instructions here: https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script
 
+## Step 1. Create a persistent volume
 ```sudo docker volume create pw2py```
 
 This will create a folder on your raspberry pi where data is stored and kept even when the docker container is stopped. After creation this folder can be found at `/var/lib/docker/volumes/pw2py`. If you ever want to redo an installation from scratch, you can clear all your data by using `sudo docker volume rm pw2py`.
-
 
 ## Step 2. Start the container with console output
 Make sure you have the Plugwise stick in one of the USB ports, and no other USB devices plugged in.
@@ -39,13 +38,13 @@ nohup: redirecting stderr to stdout
 ```
 
 ## Step 3. Open a new console and modify two config files
-Modify the two files so they contain all your circle adresses and the names for each circle.
+Modify two files so they contain all your circle adresses and the names for each circle.
 In pw-conf.json set "loginterval": "60"
 In pw-control.json set "monitor": "yes"
 
 For detailed config instructions visit https://github.com/SevenW/Plugwise-2-py
 
-Exit the editor with CTRL-x and save the file using the same name.
+Exit the editor with CTRL-x and save the file using the same name:
 ```
 sudo nano /var/lib/docker/volumes/pw2py/_data/config/pw-conf.json
 ```
@@ -58,6 +57,11 @@ sudo nano /var/lib/docker/volumes/pw2py/_data/config/pw-control.json
 sudo docker restart pw2py
 ```
 
+Plugwise-2-py is now starting for the first time with your circle configuration. It will start collecting the power history from all your circles. THIS CAN TAKE SEVERAL HOURS!!! How long it takes depends on the number of circles and the quality of the connection between circles. 30 minutes per circle is not uncommon. During that time controlling circles can be very slow, and the actual power usage can show erratic numbers. To follow the progress you can do:
+```
+sudo docker exec -t pw2py tail -F /home/pi/pw2py_host/pwlog/pw-logger.log
+```
+
 # Step 5. Enjoy Plugwise-2-py
 Open a webbrowser on a PC within the same network as your rpi.
 
@@ -66,5 +70,6 @@ To control the circles: `http://<ip.of.your.rpi>:8000`
 To manage the circles: `http://<ip.of.your.rpi>:8000/cfg-pw2py.html`
 
 To control via a MQTT client within the same network as your rpi `<ip.of.your.rpi>:1883`
+
 
 

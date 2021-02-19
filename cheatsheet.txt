@@ -8,9 +8,5 @@ https://github.com/christian-korneck/docker-pushrm#installation
 sudo docker build -t gruijter/plugwise-2-py .
 sudo docker push gruijter/plugwise-2-py
 
-# start container in background
 
-sudo docker run --restart=always --name pw2py -d \
-  -p 1883:1883 -p 8000:8000 \
-  -v pw2py:/home/pi/pw2py_host/ \
-  gruijter/plugwise-2-py
+
