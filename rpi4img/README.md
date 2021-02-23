@@ -3,6 +3,7 @@
 For people who want to install a rpi4 from scratch, this image file can be used to create a SD card. It has Raspberry Pi OS 32bit with desktop included (version January 11th 2021).
 
 ## Step 1. Burn the img on an SD card
+Get it here: https://drive.google.com/file/d/1t9oLOg3YX_-6lXjuUxrYZdT2gb46d2Vi
 Burn the img on a SD card (16GB or larger). You can use Balena Etcher to do this: https://www.balena.io/etcher/
 
 ## Step 2. Insert the SD card, connect Ethernet and Plugwise stick
