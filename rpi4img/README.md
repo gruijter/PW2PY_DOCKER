@@ -22,7 +22,7 @@ After power up, check your router to find out the IP address of your rpi. Connec
 ## Step 4 (optional). Expand the file system
 When you have an SD card larger than 16MB, you can make sure that the rpi can access all of the capacity of the SD card:
 ```
-sudo rpi-config
+sudo raspi-config
 ```
 6 > advanced options, A1 > Expand file system, Finish, Reboot > yes
 
