@@ -4,10 +4,11 @@ Install Plugwise-2-py including a MQTT server on a raspberry pi within a few min
 Plugwise-2-py is a tool to monitor and control Plugwise circles via a webinterface and/or via MQTT. For a full description visit https://github.com/SevenW/Plugwise-2-py
 
 ## What you need:
-* A Rapberry Pi (the docker image is tested on a Rpi4 with Raspbian OS 32 bit)
+* An ARM based device with 64bit OS. (The docker image was created and tested on a Rapberry Pi with Raspbian OS 64 bit).
 * A list of all your plugwise circle mac-addresses
 * The plugwise USB stick in one of the USB ports (Important: NO OTHER USB DEVICES PLUGGED IN)
-* Port 8000 (PW2Py webserver) and port 1883 (MQTT server) are free to use on the Rpi
+* Port 8000 (PW2Py webserver) is free to use on the Rpi
+* Port 1883 (MQTT broker) is free to use on the Rpi, when you don't have an existing MQTT broker
 * Able to start the console (terminal) and copy-paste the instructions below
 
 ## Installation steps:
@@ -15,61 +16,95 @@ Plugwise-2-py is a tool to monitor and control Plugwise circles via a webinterfa
 ## Step 0. Install Docker
 For Raspbian OS see instructions here: https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script
 
-## Step 1. Create a persistent volume
-```sudo docker volume create pw2py```
 
-This will create a folder on your raspberry pi where data is stored and kept even when the docker container is stopped. After creation this folder can be found at `/var/lib/docker/volumes/pw2py`. If you ever want to redo an installation from scratch, you can clear all your data by using `sudo docker volume rm pw2py`.
+## Step 1 (optional). Run an MQTT broker in docker
+If you already have an MQTT broker, you can skip this step.
 
-## Step 2. Start the container with console output
-Make sure you have the Plugwise stick in one of the USB ports, and no other USB devices plugged in.
+Create a config file:
 ```
-sudo docker run --name pw2py --restart=always -it \
+mkdir -p $HOME/mosquitto/config && sudo chmod 775 -R $HOME/mosquitto && sudo nano $HOME/mosquitto/config/mosquitto.conf
+```
+
+Put this in the mosquitto.conf file:
+```
+persistence true
+persistence_location /mosquitto/data/
+log_dest file /mosquitto/log/mosquitto.log
+listener 1883 0.0.0.0
+
+## Authentication ##
+allow_anonymous true
+```
+Exit the editor with CTRL-x and save the file.
+
+Now run the container:
+```
+sudo docker run --name mosquitto -dt --restart=unless-stopped -p 1883:1883 -p 9001:9001 -v $HOME/mosquitto/:/mosquitto/ eclipse-mosquitto
+```
+
+## Step 2. Run Plugwise-2-py in docker
+Make sure you have the Plugwise stick in one of the USB ports, and no other USB devices plugged in!
+```
+sudo docker run -d --name pw2py --restart=always \
   --device=/dev/ttyUSB0 \
-  -p 1883:1883 -p 8000:8000 \
-  -v pw2py:/home/pi/pw2py_host/ \
-  gruijter/plugwise-2-py
+  -p 8000:8000 \
+  -v $HOME/pw2py:/home/pw2py/ \
+  gruijter/pw2py
 ```
 
-All is good if you eventually get this result:
-```
-* Starting network daemon: mosquitto        [ OK ]
-nohup: redirecting stderr to stdout
-nohup: redirecting stderr to stdout
-```
+## Step 3 (optional). Configure Plugwise-2-py MQTT settings
+If you used the MQTT broker setup as described in step 1, you can skip this step. Otherwise you need to configure the mqtt connection settings.
 
-## Step 3. Open a new console and modify two config files
+```
+sudo nano $HOME/pw2py/config/pw-hostconfig.json
+```
+Change the corresponding info to match that of your MQTT broker:
+```
+  "mqtt_ip":"127.0.0.1",
+  "mqtt_port":"1883",
+  "mqtt_user": "",
+  "mqtt_password": "",
+```
+Exit the editor with CTRL-x and save the file.
+
+
+## Step 4. Configure Plugwise-2-py circle settings
+
 Modify two files so they contain all your circle adresses and the names for each circle.
-In pw-conf.json set "loginterval": "60"
-In pw-control.json set "monitor": "yes"
-
 For detailed config instructions visit https://github.com/SevenW/Plugwise-2-py
 
-Exit the editor with CTRL-x and save the file using the same name:
+Modify circle addresses and names. Modify "loginterval": "5"
 ```
-sudo nano /var/lib/docker/volumes/pw2py/_data/config/pw-conf.json
+sudo nano $HOME/pw2py/config/pw-conf.json
 ```
-```
-sudo nano /var/lib/docker/volumes/pw2py/_data/config/pw-control.json
-```
+Exit the editor with CTRL-x and save the file
 
-## Step 4. Restart the pw2py container
+
+Modify circle addresses and names. Modify "monitor": "yes"
+```
+sudo nano $HOME/pw2py/config/pw-control.json
+```
+Exit the editor with CTRL-x and save the file.
+
+
+## Step 5. Restart the pw2py container
 ```
 sudo docker restart pw2py
 ```
 
 Plugwise-2-py is now starting for the first time with your circle configuration. It will start collecting the power history from all your circles. THIS CAN TAKE SEVERAL HOURS!!! How long it takes depends on the number of circles and the quality of the connection between circles. 30 minutes per circle is not uncommon. During that time controlling circles can be very slow, and the actual power usage can show erratic numbers. To follow the progress you can do:
 ```
-sudo docker exec -t pw2py tail -F /home/pi/pw2py_host/pwlog/pw-logger.log
+sudo docker exec -t pw2py tail -F /home/pw2py/pwlog/pw-logger.log
 ```
 
-# Step 5. Enjoy Plugwise-2-py
+# Step 6. Enjoy Plugwise-2-py
 Open a webbrowser on a PC within the same network as your rpi.
 
 To control the circles: `http://<ip.of.your.rpi>:8000`
 
 To manage the circles: `http://<ip.of.your.rpi>:8000/cfg-pw2py.html`
 
-To control via a MQTT client within the same network as your rpi `<ip.of.your.rpi>:1883`
+To control via an MQTT client `<ip.of.your.broker>:1883`
 
 
 

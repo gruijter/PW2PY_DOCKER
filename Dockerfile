@@ -1,35 +1,23 @@
-FROM ubuntu:18.04
+FROM python:3
 
-# update apt
-RUN apt update
-
-# Install mosquitto
-RUN apt install --no-install-recommends -y mosquitto
-
-# Install Python3
-RUN apt install -y --no-install-recommends python3  && apt install -y python3-pip
+WORKDIR /usr/src
 
 # Install Plugwise-2-py
-RUN apt install --no-install-recommends -y git && git clone https://github.com/SevenW/Plugwise-2-py.git
+# RUN git clone https://github.com/SevenW/Plugwise-2-py.git
+RUN git clone https://github.com/gruijter/Plugwise-2-py.git
 
-WORKDIR /Plugwise-2-py
-RUN pip3 install .
-
-# Prepare volume for config files and logs
-RUN mkdir -p /home/pi/pw2py_host/config && mkdir /home/pi/pw2py_host/datalog && mkdir /home/pi/pw2py_host/pwlog
-# RUN chmod 777 -R /home/pi/pw2py_host
-# VOLUME /home/pi/pw2py_host
+WORKDIR /usr/src/Plugwise-2-py
+RUN chmod -R 777 /usr/src/Plugwise-2-py
+RUN pip install .
+RUN chmod -R 777 /usr/src/Plugwise-2-py
 
 # copy default config and startup script
-COPY pw-hostconfig.json /Plugwise-2-py/config-default
-COPY start.sh /Plugwise-2-py
-RUN chmod +x /Plugwise-2-py/start.sh
-
-# remove pip and git python3-pip
-RUN apt remove -y git && apt remove -y python3-pip && apt autoremove -y
+COPY pw-hostconfig.json /usr/src/Plugwise-2-py/config-default
+COPY start.sh /usr/src/Plugwise-2-py
+RUN chmod +x /usr/src/Plugwise-2-py/start.sh
 
 # expose default ports
-EXPOSE 8000 1883
+EXPOSE 8000
 
 ENTRYPOINT [ "/bin/bash" ]
-CMD [ "/Plugwise-2-py/start.sh" ]
+CMD [ "/usr/src/Plugwise-2-py/start.sh" ]

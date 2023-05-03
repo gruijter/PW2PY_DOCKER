@@ -1,14 +1,24 @@
-service mosquitto start
-sleep 3
+# set working directory
+cd /usr/src/Plugwise-2-py
 
-cp -n config-default/pw-hostconfig.json /home/pi/pw2py_host/config
-cp -n config-default/pw-control.json /home/pi/pw2py_host/config
-cp -n config-default/pw-conf.json /home/pi/pw2py_host/config
+# Create folders on host if needed
+mkdir -p /home/pw2py/config
+mkdir /home/pw2py/datalog
+mkdir /home/pw2py/pwlog
+chmod -R 777 /home/pw2py
 
-cp /home/pi/pw2py_host/config/pw* config/
+# copy config files to host if needed
+cp -n config-default/pw-hostconfig.json /home/pw2py/config
+cp -n config-default/pw-control.json /home/pw2py/config
+cp -n config-default/pw-conf.json /home/pw2py/config
 
-nohup python3 Plugwise-2.py >>/home/pi/pw2py_host/pwlog/pwout.log&
-nohup python3 Plugwise-2-web.py >>/home/pi/pw2py_host/pwlog/pwwebout.log&
+# copy config files from host to pw2py config
+cp /home/pw2py/config/pw* config/
 
+# start pw2py
+nohup python Plugwise-2.py >>/home/pw2py/pwlog/pwout.log&
+nohup python Plugwise-2-web.py >>/home/pw2py/pwlog/pwwebout.log&
+
+# keep container running
 wait
 

@@ -5,8 +5,8 @@ https://github.com/SevenW/Plugwise-2-py
 https://github.com/christian-korneck/docker-pushrm#installation
 
 # create image and upload to dockerhub
-sudo docker build -t gruijter/plugwise-2-py .
-sudo docker push gruijter/plugwise-2-py
+sudo docker build -t gruijter/pw2py .
+sudo docker push gruijter/pw2py
 
 
 

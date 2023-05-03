@@ -4,8 +4,8 @@
   "mqtt_user": "",
   "mqtt_password": "",
   "serial": "/dev/ttyUSB0",
-  "permanent_path": "/home/pi/pw2py_host/datalog",
-  "tmp_path": "/home/pi/pw2py_host/tmp",
-  "log_path": "/home/pi/pw2py_host/pwlog",
+  "permanent_path": "/home/pw2py/datalog",
+  "tmp_path": "/home/pw2py/tmp",
+  "log_path": "/home/pw2py/pwlog",
   "log_format": "epoch"
 }
